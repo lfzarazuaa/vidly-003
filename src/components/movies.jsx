@@ -2,11 +2,18 @@ import { Component, Fragment } from "react";
 import Formatter from "../utils/formatters";
 import LikeIcon from "./common/likeIcon";
 import { getMovies, deleteMovie, resetMovies, saveMovie } from "../services/fakeMovieService";
+import Pagination from "./common/pagination";
 
 class Movies extends Component {
     constructor(props) {
         super(props);
-        this.state = { movies : getMovies() }
+        const movies = getMovies()
+        this.state = { movies,
+            paginationInfo: {
+                numberOfPages : 12,
+                selectedPage : 3
+            }
+        }
     }
 
     handleOnReset = () => {
@@ -50,6 +57,16 @@ class Movies extends Component {
         }
     }
 
+    handleOnClickPage = (pageNumber) => {
+        // TODO: Logic for update table
+        
+        // Select the correct number
+        const {paginationInfo} = this.state;
+        if (paginationInfo.selectedPage === pageNumber) return
+        paginationInfo.selectedPage = pageNumber;
+        this.setState({paginationInfo});
+    }
+
     generateMovieDto(){
         return this.state.movies.map(movie=>{
             return{
@@ -67,23 +84,28 @@ class Movies extends Component {
         if (!this.state.movies || this.state.movies<1) {
             return null;
         }
+        const {numberOfPages, selectedPage} = this.state.paginationInfo;
         return (
-            <table className="table">
-                <thead>
-                <tr>
-                    <th key={1} scope="col">#</th>
-                    <th key={2} scope="col">Title</th>
-                    <th key={3} scope="col">Genre</th>
-                    <th key={4} scope="col">Stock</th>
-                    <th key={5} scope="col">Rate</th>
-                    <th key={6} scope="col">Like</th>
-                    <th key={7} scope="col"> </th>
-                </tr>
-                </thead>
-                <tbody>
-                    {this.generateMovieDto().map((movie,counter)=>Formatter.formatAsTableRow(movie,counter))}
-                </tbody>
-            </table>
+            <Fragment>
+
+                <table className="table">
+                    <thead>
+                    <tr>
+                        <th key={1} scope="col">#</th>
+                        <th key={2} scope="col">Title</th>
+                        <th key={3} scope="col">Genre</th>
+                        <th key={4} scope="col">Stock</th>
+                        <th key={5} scope="col">Rate</th>
+                        <th key={6} scope="col">Like</th>
+                        <th key={7} scope="col"> </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {this.generateMovieDto().map((movie,counter)=>Formatter.formatAsTableRow(movie,counter))}
+                    </tbody>
+                </table>
+                <Pagination numberOfPages={numberOfPages} selectedPage={selectedPage} onClickPage={(pageNumber)=>{this.handleOnClickPage(pageNumber)}}></Pagination>
+            </Fragment>
         );
     }
 
