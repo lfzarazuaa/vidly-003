@@ -12,7 +12,11 @@ const Formatter = {
       if (prevElements)
         acum = Array.isArray(prevElements) ? [...prevElements] : [prevElements];
       for (const key in content) {
-        if (Object.hasOwnProperty.call(content, key) && key !== "_id") {
+        if (
+          Object.hasOwnProperty.call(content, key) &&
+          key !== "_id" &&
+          key !== "counter"
+        ) {
           const element = content[key];
           acum.push(<td key={acum.length + 1}>{element}</td>);
         }
@@ -21,7 +25,7 @@ const Formatter = {
     };
     const firstElement = (
       <th key={1} scope="row">
-        {++counter}
+        {counter}
       </th>
     );
     return <tr key={counter}>{getElements(firstElement)}</tr>;
