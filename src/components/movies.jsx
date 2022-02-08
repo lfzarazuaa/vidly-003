@@ -7,19 +7,28 @@ import {
   resetMovies,
   saveMovie,
 } from "../services/fakeMovieService";
+import { getGenres } from "../services/fakeGenreService";
+
 import Pagination from "./common/pagination";
 import {
   paginateCollection,
   calculteNumberOfItem,
   updatePageNumber,
 } from "../utils/pagination";
+import ListSelect from "./common/listSelect";
 
 class Movies extends Component {
   constructor(props) {
     super(props);
     const movies = getMovies();
+    const genresInfo = {
+      genres: getGenres(),
+      selectedGenre: -1,
+    };
     this.state = {
       movies,
+      moviesByGenre: movies,
+      genresInfo,
       paginationInfo: {
         itemsCount: movies.length,
         pageSize: 9,
@@ -30,7 +39,10 @@ class Movies extends Component {
 
   handleOnReset = () => {
     let movies = resetMovies();
-    this.setState({ movies: movies });
+    const { paginationInfo } = this.state;
+    paginationInfo.itemsCount = movies.length;
+    paginationInfo.selectedPage = 1;
+    this.setState({ movies: movies, paginationInfo });
   };
 
   generateMessage() {
@@ -84,7 +96,8 @@ class Movies extends Component {
         pageSize,
         selectedPage
       );
-      this.setState({ movies, paginationInfo });
+      const moviesByGenre = this.getMoviesByGenre();
+      this.setState({ movies, paginationInfo, moviesByGenre });
     } catch (error) {
       console.log(error);
     }
@@ -100,10 +113,56 @@ class Movies extends Component {
     this.setState({ paginationInfo });
   };
 
+  handleOnDefaultElementSelected = () => {
+    const { genresInfo, paginationInfo } = this.state;
+    genresInfo.selectedGenre = -1;
+    const moviesByGenre = this.getMoviesByGenre();
+    paginationInfo.itemsCount = moviesByGenre.length;
+    paginationInfo.selectedPage = 1;
+    this.setState({ genresInfo, paginationInfo, moviesByGenre });
+  };
+
+  getMoviesByGenre = () => {
+    const { genres, selectedGenre } = this.state.genresInfo;
+
+    let moviesByGenre = this.state.movies;
+    if (selectedGenre >= 0) {
+      moviesByGenre = moviesByGenre.filter((movie) => {
+        return movie.genre._id === genres[selectedGenre]._id;
+      });
+    }
+    return moviesByGenre;
+  };
+
+  handleOnGenreSelected = (id) => {
+    const { genresInfo } = this.state;
+    let { moviesByGenre } = this.state;
+
+    genresInfo.selectedGenre = genresInfo.genres.findIndex(
+      (genre) => genre._id === id
+    );
+
+    const { paginationInfo } = this.state;
+
+    moviesByGenre = this.getMoviesByGenre();
+
+    paginationInfo.itemsCount = moviesByGenre.length;
+    paginationInfo.selectedPage = 1;
+
+    this.setState({ genresInfo, paginationInfo, moviesByGenre });
+  };
+
   generateMovieDto() {
-    const { pageSize, selectedPage: pageNumber } = this.state.paginationInfo;
-    const allMovies = this.state.movies;
-    let moviesPaginated = paginateCollection(allMovies, pageNumber, pageSize);
+    const { moviesByGenre, paginationInfo } = this.state;
+
+    const { genres, selectedGenre } = this.state.genresInfo;
+
+    let moviesPaginated = paginateCollection(
+      moviesByGenre,
+      paginationInfo.selectedPage,
+      paginationInfo.pageSize
+    );
+
     return moviesPaginated.map((movie) => {
       return {
         title: movie.title,
@@ -128,6 +187,13 @@ class Movies extends Component {
     });
   }
 
+  generateGenreDto() {
+    return this.state.genresInfo.genres.map((genre) => {
+      const { _id: id, name } = genre;
+      return { id, name };
+    });
+  }
+
   generateTable() {
     if (!this.state.movies || this.state.movies < 1) {
       return null;
@@ -136,41 +202,54 @@ class Movies extends Component {
     return (
       <Fragment>
         <div className="row">
-          <table className="table ml-2">
-            <thead>
-              <tr>
-                <th key={1} scope="col">
-                  #
-                </th>
-                <th key={2} scope="col">
-                  Title
-                </th>
-                <th key={3} scope="col">
-                  Genre
-                </th>
-                <th key={4} scope="col">
-                  Stock
-                </th>
-                <th key={5} scope="col">
-                  Rate
-                </th>
-                <th key={6} scope="col">
-                  Like
-                </th>
-                <th key={7} scope="col">
-                  {" "}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.generateMovieDto().map((movie, x) =>
-                Formatter.formatAsTableRow(
-                  movie,
-                  calculteNumberOfItem(x, pageSize, selectedPage)
-                )
-              )}
-            </tbody>
-          </table>
+          <div className="col-12 col-md-4">
+            <ListSelect
+              mainMessage="All genres"
+              selectedElement={this.state.genresInfo.selectedGenre}
+              onDefaultElementSelected={() =>
+                this.handleOnDefaultElementSelected()
+              }
+              onElementSelected={(id) => this.handleOnGenreSelected(id)}
+              elements={this.generateGenreDto()}
+            />
+          </div>
+          <div className="col-12 col-md-8">
+            <table className="table ml-2">
+              <thead>
+                <tr>
+                  <th key={1} scope="col">
+                    #
+                  </th>
+                  <th key={2} scope="col">
+                    Title
+                  </th>
+                  <th key={3} scope="col">
+                    Genre
+                  </th>
+                  <th key={4} scope="col">
+                    Stock
+                  </th>
+                  <th key={5} scope="col">
+                    Rate
+                  </th>
+                  <th key={6} scope="col">
+                    Like
+                  </th>
+                  <th key={7} scope="col">
+                    {" "}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.generateMovieDto().map((movie, x) =>
+                  Formatter.formatAsTableRow(
+                    movie,
+                    calculteNumberOfItem(x, pageSize, selectedPage)
+                  )
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
         <div className="row">
           <Pagination

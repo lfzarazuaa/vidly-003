@@ -1,6 +1,6 @@
 import * as genresAPI from "./fakeGenreService";
 
-import { movies } from "./getFakeMovies";
+import { movies } from "./getFakeMoviesLarge";
 
 const moviesClone = [...movies];
 
