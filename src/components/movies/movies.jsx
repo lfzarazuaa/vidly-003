@@ -1,17 +1,17 @@
 import { Component, Fragment } from "react";
-import Formatter from "../../utils/formatters";
-import LikeIcon from "../common/likeIcon";
+import _ from "lodash";
 import {
 	getMovies,
 	deleteMovie,
 	resetMovies,
 	saveMovie,
 } from "../../services/fakeMovieService";
-import Pagination from "../common/pagination";
 import { paginate } from "../../utils/paginate";
 import ListGroup from "../common/listGroup";
-import { getGenres } from "../../services/fakeGenreService";
 import MoviesTable from "./moviesTable";
+import Pagination from "../common/pagination";
+import { getGenres } from "../../services/fakeGenreService";
+import { sortByProperty, updateSortColumn } from "../../utils/sort";
 
 class Movies extends Component {
 	constructor(props) {
@@ -22,8 +22,10 @@ class Movies extends Component {
 			selectedGenre: null,
 			currentPage: 1,
 			pageSize: 4,
+			sortColumn: { path: "title", order: "asc" },
 		};
 	}
+
 	// Lifecycle
 	componentDidMount() {
 		// For loading components.
@@ -61,15 +63,22 @@ class Movies extends Component {
 		}
 	};
 
+	// Filtering
+	handleGenreSelect = (genre) => {
+		this.setState({ selectedGenre: genre, currentPage: 1 });
+	};
+
+	// Sorting
+	handleOnSort = (sortColumn) => {
+		// New state calculated on the component.
+		this.setState({ sortColumn });
+	};
+
 	// Pagination
 	handleOnPageChange = (page) => {
 		this.setState({ currentPage: page });
 	};
 
-	// Filtering
-	handleGenreSelect = (genre) => {
-		this.setState({ selectedGenre: genre, currentPage: 1 });
-	};
 	// Helpers to render.
 	generateMessage() {
 		const length = this.state.movies.length;
@@ -111,6 +120,7 @@ class Movies extends Component {
 			movies: allMovies,
 			genres,
 			selectedGenre,
+			sortColumn,
 		} = this.state;
 
 		const filteredMovies =
@@ -120,32 +130,9 @@ class Movies extends Component {
 
 		const count = filteredMovies.length;
 
-		const movies = paginate(filteredMovies, currentPage, pageSize);
+		const sortedMovies = sortByProperty(filteredMovies, sortColumn);
 
-		const generateMovieDto = () => {
-			return movies.map((movie) => {
-				return {
-					title: movie.title,
-					genre: movie.genre.name,
-					numberInStock: movie.numberInStock,
-					dailyRentalRate: movie.dailyRentalRate,
-					isLikePressed: (
-						<LikeIcon
-							isLikeSelected={movie.isLikePressed}
-							onClickLike={() => this.handleOnLike(movie._id)}
-						/>
-					),
-					deleteButton: (
-						<button
-							className="btn btn-danger"
-							onClick={() => this.handleOnDelete(movie._id)}
-						>
-							Delete
-						</button>
-					),
-				};
-			});
-		};
+		const movies = paginate(sortedMovies, currentPage, pageSize);
 
 		return (
 			<div className="row">
@@ -156,40 +143,14 @@ class Movies extends Component {
 						onItemSelect={(genre) => this.handleGenreSelect(genre)}
 					/>
 				</div>
-				<MoviesTable />
 				<div className="col col-sm">
-					<table className="table">
-						<thead>
-							<tr>
-								<th key={1} scope="col">
-									#
-								</th>
-								<th key={2} scope="col">
-									Title
-								</th>
-								<th key={3} scope="col">
-									Genre
-								</th>
-								<th key={4} scope="col">
-									Stock
-								</th>
-								<th key={5} scope="col">
-									Rate
-								</th>
-								<th key={6} scope="col">
-									Like
-								</th>
-								<th key={7} scope="col">
-									{" "}
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							{generateMovieDto().map((movie, counter) =>
-								Formatter.formatAsTableRow(movie, counter)
-							)}
-						</tbody>
-					</table>
+					<MoviesTable
+						movies={movies}
+						sortColumn={sortColumn}
+						onLike={(movieId) => this.handleOnLike(movieId)}
+						onDelete={(movieId) => this.handleOnDelete(movieId)}
+						onSort={(sortColumn) => this.handleOnSort(sortColumn)}
+					/>
 					<Pagination
 						itemsCount={count}
 						pageSize={pageSize}

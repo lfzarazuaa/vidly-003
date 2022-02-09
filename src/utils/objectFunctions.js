@@ -1,5 +1,4 @@
 import _ from "lodash";
-import { any } from "prop-types";
 
 function getObjectProperty(item, propertyPath = String, defaultValue = String) {
 	if (defaultValue) return _(item).get(propertyPath, defaultValue);
