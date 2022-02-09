@@ -1,17 +1,22 @@
 import _ from "lodash";
-import { getObjectProperty } from "./objectFunctions";
+import { addCounterToItems, getObjectProperty } from "./objectFunctions";
 
 function sortByProperty(
 	items,
 	sortColumn,
+	addCounter,
 	pathColumnProperty = "path",
 	orderColumnProperty = "order"
 ) {
-	return _.orderBy(
+	const sorted = _.orderBy(
 		items,
 		[getObjectProperty(sortColumn, pathColumnProperty)],
 		[getObjectProperty(sortColumn, orderColumnProperty)]
 	);
+	if (addCounter) {
+		return addCounterToItems(sorted);
+	}
+	return sorted;
 }
 
 function updateSortColumn(

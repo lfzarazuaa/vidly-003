@@ -1,5 +1,4 @@
 import { Component, Fragment } from "react";
-import _ from "lodash";
 import {
 	getMovies,
 	deleteMovie,
@@ -11,7 +10,7 @@ import ListGroup from "../common/listGroup";
 import MoviesTable from "./moviesTable";
 import Pagination from "../common/pagination";
 import { getGenres } from "../../services/fakeGenreService";
-import { sortByProperty, updateSortColumn } from "../../utils/sort";
+import { sortByProperty } from "../../utils/sort";
 
 class Movies extends Component {
 	constructor(props) {
@@ -79,13 +78,36 @@ class Movies extends Component {
 		this.setState({ currentPage: page });
 	};
 
+	// Do Filtering, Order and Pagination operations
+	getProccessedMovies() {
+		const {
+			pageSize,
+			currentPage,
+			movies: allMovies,
+			selectedGenre,
+			sortColumn,
+		} = this.state;
+
+		const filteredMovies =
+			selectedGenre && selectedGenre._id
+				? allMovies.filter((movie) => movie.genre._id === selectedGenre._id)
+				: allMovies;
+
+		const totalCount = filteredMovies.length;
+
+		const sortedMovies = sortByProperty(filteredMovies, sortColumn, true);
+
+		const movies = paginate(sortedMovies, currentPage, pageSize);
+		return { movies, totalCount };
+	}
+
 	// Helpers to render.
 	generateMessage() {
 		const length = this.state.movies.length;
 		switch (length) {
 			case 0:
 				return (
-					<div className="alert alert-warning">
+					<div className="alert alert-warning m-2">
 						<p style={{ display: "inline" }}>There are no movies</p>
 						<button
 							className="ml-2 btn btn-success"
@@ -97,13 +119,13 @@ class Movies extends Component {
 				);
 			case 1:
 				return (
-					<div className="alert alert-warning">
+					<div className="alert alert-warning m-2">
 						<p>There is one movie</p>
 					</div>
 				);
 			default:
 				return (
-					<div className="alert alert-info">
+					<div className="alert alert-info m-2">
 						<p>{`There are ${length} movies`}</p>
 					</div>
 				);
@@ -114,25 +136,10 @@ class Movies extends Component {
 		if (!this.state.movies || this.state.movies < 1) {
 			return null;
 		}
-		const {
-			pageSize,
-			currentPage,
-			movies: allMovies,
-			genres,
-			selectedGenre,
-			sortColumn,
-		} = this.state;
+		const { pageSize, currentPage, genres, selectedGenre, sortColumn } =
+			this.state;
 
-		const filteredMovies =
-			selectedGenre && selectedGenre._id
-				? allMovies.filter((movie) => movie.genre._id === selectedGenre._id)
-				: allMovies;
-
-		const count = filteredMovies.length;
-
-		const sortedMovies = sortByProperty(filteredMovies, sortColumn);
-
-		const movies = paginate(sortedMovies, currentPage, pageSize);
+		const { movies, totalCount } = this.getProccessedMovies();
 
 		return (
 			<div className="row">
@@ -152,7 +159,7 @@ class Movies extends Component {
 						onSort={(sortColumn) => this.handleOnSort(sortColumn)}
 					/>
 					<Pagination
-						itemsCount={count}
+						itemsCount={totalCount}
 						pageSize={pageSize}
 						currentPage={currentPage}
 						onPageChange={(page) => this.handleOnPageChange(page)}

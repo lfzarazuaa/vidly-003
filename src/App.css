@@ -28,12 +28,16 @@
 	color: #61dafb;
 }
 
+.click-enabled {
+	cursor: pointer;
+}
+
 .icon-enabled {
-	color: rgb(224, 210, 16);
+	color: rgb(0, 123, 255, 1);
 }
 
 .icon-disabled {
-	color: rgb(97, 97, 94);
+	color: rgb(108, 117, 125, 1);
 }
 
 @keyframes App-logo-spin {

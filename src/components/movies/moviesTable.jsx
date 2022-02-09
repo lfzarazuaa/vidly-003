@@ -1,85 +1,80 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
-import Formatter from "../../utils/formatters";
 import LikeIcon from "../common/likeIcon";
-import SortIcon from "../common/sortIcon";
-import { updateSortColumn } from "../../utils/sort";
+import { addIdToItems } from "../../utils/objectFunctions";
+import Table from "../common/table";
 
 class MoviesTable extends Component {
+	columns = [
+		{
+			headerContent: <span className="fa fa-list-ol" aria-hidden="true"></span>,
+			cellContent: (movie) => (
+				<div>
+					<span className="fa fa-id-card" aria-hidden="true"></span>
+					<span> {movie.counter}</span>
+				</div>
+			),
+		}, // Not able to sort.
+		{
+			path: "title", // Path for sorting.
+			headerContent: "Title",
+			cellContent: (movie) => movie.title,
+		},
+		{
+			path: "genre.name", // Path for sorting.
+			headerContent: "Genre",
+			cellContent: (movie) => movie.genre.name,
+		},
+		{
+			path: "numberInStock", // Path for sorting.
+			headerContent: "Stock",
+			cellContent: (movie) => movie.numberInStock,
+		},
+		{
+			path: "dailyRentalRate", // Path for sorting.
+			headerContent: "Rate",
+			cellContent: (movie) => movie.dailyRentalRate,
+		},
+		{
+			headerContent: (
+				<span className="fa fa-heartbeat" aria-hidden="true"></span>
+			),
+			cellContent: (movie) => (
+				<LikeIcon
+					isLikeSelected={movie.isLikePressed}
+					onClickLike={() => this.props.onLike(movie._id)}
+				/>
+			),
+		}, // Not able to sort.
+		{
+			headerContent: (
+				<span className="fa fa-window-close" aria-hidden="true"></span>
+			),
+			cellContent: (movie) => (
+				<button
+					className="btn btn-danger"
+					onClick={() => this.props.onDelete(movie._id)}
+				>
+					Delete
+				</button>
+			),
+		}, // Not able to sort.
+	];
+
+	constructor(props) {
+		super(props);
+		this.columns = addIdToItems(this.columns);
+	}
+
 	render() {
-		const { movies, sortColumn, onLike, onDelete, onSort } = this.props;
-
-		const raiseSort = (propertyPath) => {
-			// Doing the logic that belongs to the component.
-			onSort(updateSortColumn(sortColumn, propertyPath)); // Pass the new state to the caller component
-		};
-
-		const generateMovieDto = () => {
-			return movies.map((movie) => {
-				return {
-					title: movie.title,
-					genre: movie.genre.name,
-					numberInStock: movie.numberInStock,
-					dailyRentalRate: movie.dailyRentalRate,
-					isLikePressed: (
-						<LikeIcon
-							isLikeSelected={movie.isLikePressed}
-							onClickLike={() => onLike(movie._id)}
-						/>
-					),
-					deleteButton: (
-						<button
-							className="btn btn-danger"
-							onClick={() => onDelete(movie._id)}
-						>
-							Delete
-						</button>
-					),
-				};
-			});
-		};
-
+		const { movies, sortColumn, onSort } = this.props;
 		return (
-			<table className="table">
-				<thead>
-					<tr>
-						<th key={1} scope="col">
-							#
-						</th>
-						<th onClick={() => raiseSort("title")} key={2} scope="col">
-							<span>Title </span>
-							<SortIcon isAscSort={true} isSorting={true} />
-						</th>
-						<th onClick={() => raiseSort("genre.name")} key={3} scope="col">
-							<span>Genre </span>
-							<SortIcon isAscSort={true} />
-						</th>
-						<th onClick={() => raiseSort("numberInStock")} key={4} scope="col">
-							<span>Stock </span>
-							<SortIcon isAscSort={true} />
-						</th>
-						<th
-							onClick={() => raiseSort("dailyRentalRate")}
-							key={5}
-							scope="col"
-						>
-							<span>Rate </span>
-							<SortIcon isAscSort={true} />
-						</th>
-						<th key={6} scope="col">
-							Like
-						</th>
-						<th key={7} scope="col">
-							{" "}
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					{generateMovieDto().map((movie, counter) =>
-						Formatter.formatAsTableRow(movie, counter)
-					)}
-				</tbody>
-			</table>
+			<Table
+				items={movies} // Data to pass
+				columns={this.columns} // Columns distribution
+				sortColumn={sortColumn} // Column in wich will order.
+				onSort={(updatedSortColumn) => onSort(updatedSortColumn)} // Sorting
+			/>
 		);
 	}
 }
