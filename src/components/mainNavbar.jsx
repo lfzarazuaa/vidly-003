@@ -22,12 +22,16 @@ class MainNavbar extends Component {
 					name: "Rentals",
 					url: "/rentals",
 				},
+				{
+					name: "Login",
+					url: "/login",
+				},
 			],
 		};
 	}
 	render() {
 		const { title, items } = this.state;
-		return <Navbar title={title} items={items}/>;
+		return <Navbar title={title} items={items} />;
 	}
 }
 
