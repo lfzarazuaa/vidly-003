@@ -6,9 +6,9 @@ import {
 	saveMovie,
 } from "../../services/fakeMovieService";
 import { paginate } from "../../utils/paginate";
-import ListGroup from "../common/listGroup";
-import MoviesTable from "./moviesTable";
-import Pagination from "../common/pagination";
+import ListGroup from "../../components/common/listGroup";
+import MoviesTable from "../../components/movies/moviesTable";
+import Pagination from "../../components/common/pagination";
 import { getGenres } from "../../services/fakeGenreService";
 import { sortByProperty } from "../../utils/sort";
 
@@ -79,7 +79,7 @@ class Movies extends Component {
 	};
 
 	// Do Filtering, Order and Pagination operations
-	getProccessedMovies() {
+	getProcessedMovies() {
 		const {
 			pageSize,
 			currentPage,
@@ -139,7 +139,7 @@ class Movies extends Component {
 		const { pageSize, currentPage, genres, selectedGenre, sortColumn } =
 			this.state;
 
-		const { movies, totalCount } = this.getProccessedMovies();
+		const { movies, totalCount } = this.getProcessedMovies();
 
 		return (
 			<div className="row">

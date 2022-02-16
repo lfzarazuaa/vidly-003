@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import LikeIcon from "../common/likeIcon";
 import { addIdToItems } from "../../utils/objectFunctions";
 import Table from "../common/table";
+import { Link } from "react-router-dom";
 
 class MoviesTable extends Component {
 	columns = [
@@ -18,7 +19,14 @@ class MoviesTable extends Component {
 		{
 			path: "title", // Path for sorting.
 			headerContent: "Title",
-			cellContent: (movie) => movie.title,
+			cellContent: (movie) => (
+				<Link
+					className="btn btn-outline-info"
+					to={this.generateMovieLink(movie)}
+				>
+					{movie.title}
+				</Link>
+			),
 		},
 		{
 			path: "genre.name", // Path for sorting.
@@ -66,6 +74,9 @@ class MoviesTable extends Component {
 		this.columns = addIdToItems(this.columns);
 	}
 
+	generateMovieLink = (movie) => {
+		return `movies/${movie._id}`;
+	};
 	render() {
 		const { movies, sortColumn, onSort } = this.props;
 		return (

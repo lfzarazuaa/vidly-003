@@ -2,7 +2,7 @@ const Formatter = {
   formatAsList: (content, counter = Number) => <li key={counter}>{content}</li>,
 
   formatAsCompleteList: function (arr = Array, nullMsg) {
-    if (arr.isArray || arr.length === 0) return null || nullMsg;
+    if (arr.isArray || arr.length === 0) return nullMsg;
     return <ul>{arr.map(this.formatAsList)}</ul>;
   },
 
