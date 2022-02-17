@@ -33,9 +33,15 @@ function getKeyValueObject(
 	if (otherProperties) keyValue = { ...keyValue, ...otherProperties };
 	return keyValue;
 }
+
+function isEmptyObject(object) {
+	for (const {} in object) return false;
+	return true;
+}
 export {
 	addIdToItems,
 	addCounterToItems,
 	getObjectProperty,
 	getKeyValueObject,
+	isEmptyObject,
 };

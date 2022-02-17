@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Joi from "joi-browser";
 import Input from "./../../components/common/inputText";
+import { isEmptyObject } from "../../utils/objectFunctions";
 
 class LoginForm extends Component {
 	constructor(props) {
@@ -19,8 +20,8 @@ class LoginForm extends Component {
 		};
 		const { username, password } = this.componentsProps;
 		this.schema = {
-			[username.name]: Joi.string().required(),
-			[password.name]: Joi.string().required(),
+			[username.name]: Joi.string().required().label(username.label),
+			[password.name]: Joi.string().required().label(password.label),
 		};
 		this.state = {
 			account: {
@@ -32,30 +33,27 @@ class LoginForm extends Component {
 	}
 
 	validate = () => {
-		const result = Joi.validate(this.state.account, this.schema, {
-			abortEarly: false,
-		});
-		console.log(result);
+		const { state, schema } = this;
+		const options = { abortEarly: false }; // Check every field as the schema is defined.
+		// Obtain error property from Joi.
+		const { error } = Joi.validate(state.account, schema, options);
 		const errors = {};
-
-		const { account } = this.state;
-		const { username, password } = this.componentsProps;
-		if (account[username.name].trim() === "")
-			errors[username.name] = "Username is required.";
-		if (account[password.name].trim() === "")
-			errors[password.name] = "Password is required.";
+		if (!error) return errors;
+		// Read all the errors from the array.
+		error.details.forEach((error) => {
+			const { path: fieldName, message: errorMessage } = error;
+			errors[fieldName] = errorMessage;
+		});
 		return errors;
 	};
 
 	validateProperty = (input) => {
-		const { username, password } = this.componentsProps;
-		if (input.name === username.name) {
-			if (input.value.trim() === "") return "Username required.";
-		}
-		if (input.name === password.name) {
-			if (input.value.trim() === "") return "Password required.";
-		}
-		return null;
+		const { name, value } = input;
+		// For validate only one property not all the schema.
+		const property = { [name]: value };
+		const propertySchema = { [name]: this.schema[name] };
+		const { error } = Joi.validate(property, propertySchema);
+		return error ? error.details[0].message : null;
 	};
 
 	handleOnLogin = (e) => {
@@ -67,10 +65,14 @@ class LoginForm extends Component {
 	handleOnChangeInput = ({ target: input }) => {
 		const { errors } = this.state;
 		const errorMessage = this.validateProperty(input);
+		// Update error according to the field
 		if (errorMessage) errors[input.name] = errorMessage;
-		else delete errors[input.name];
+		// Assign the error.
+		else delete errors[input.name]; // Delete the error
+		// Update field content
 		const { account } = this.state;
 		account[input.name] = input.value;
+		//Update the state with updated content and errors messages.
 		this.setState({ account, errors });
 	};
 
@@ -97,7 +99,11 @@ class LoginForm extends Component {
 						error={errors.password}
 						OnChangeInput={(e) => handleOnChangeInput(e)}
 					/>
-					<button type="submit" className="btn btn-primary mt-2">
+					<button
+						disabled={!isEmptyObject(this.validate())}
+						type="submit"
+						className="btn btn-primary mt-2"
+					>
 						Login
 					</button>
 				</form>
