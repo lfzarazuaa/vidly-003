@@ -1,5 +1,7 @@
 import React, { Component } from "react";
+import Joi from "joi-browser";
 import Input from "./../../components/common/inputText";
+
 class LoginForm extends Component {
 	constructor(props) {
 		super(props);
@@ -16,6 +18,10 @@ class LoginForm extends Component {
 			},
 		};
 		const { username, password } = this.componentsProps;
+		this.schema = {
+			[username.name]: Joi.string().required(),
+			[password.name]: Joi.string().required(),
+		};
 		this.state = {
 			account: {
 				[username.name]: "mosh",
@@ -26,20 +32,27 @@ class LoginForm extends Component {
 	}
 
 	validate = () => {
+		const result = Joi.validate(this.state.account, this.schema, {
+			abortEarly: false,
+		});
+		console.log(result);
 		const errors = {};
+
 		const { account } = this.state;
-		if (account.username.trim() === "")
-			errors.username = "Username is required.";
-		if (account.password.trim() === "")
-			errors.password = "Password is required.";
+		const { username, password } = this.componentsProps;
+		if (account[username.name].trim() === "")
+			errors[username.name] = "Username is required.";
+		if (account[password.name].trim() === "")
+			errors[password.name] = "Password is required.";
 		return errors;
 	};
 
 	validateProperty = (input) => {
-		if (input.name === "username") {
+		const { username, password } = this.componentsProps;
+		if (input.name === username.name) {
 			if (input.value.trim() === "") return "Username required.";
 		}
-		if (input.name === "password") {
+		if (input.name === password.name) {
 			if (input.value.trim() === "") return "Password required.";
 		}
 		return null;
@@ -57,7 +70,6 @@ class LoginForm extends Component {
 		if (errorMessage) errors[input.name] = errorMessage;
 		else delete errors[input.name];
 		const { account } = this.state;
-		console.log(input.value);
 		account[input.name] = input.value;
 		this.setState({ account, errors });
 	};
