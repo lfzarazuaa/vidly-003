@@ -26,6 +26,10 @@ class MainNavbar extends Component {
 					name: "Login",
 					url: "/login",
 				},
+				{
+					name: "Register",
+					url: "/login/register",
+				},
 			],
 		};
 	}
