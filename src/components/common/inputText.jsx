@@ -1,14 +1,13 @@
 const Input = (props) => {
-	const { name, value, label, type, error, OnChangeInput } = props;
+	const { name, label, error, OnChangeInput, ...otherProps } = props;
 	return (
 		<div className="form-group">
 			<label htmlFor={name}>{label}</label>
 			<input
+				{...otherProps}
 				name={name}
-				value={value}
 				onChange={(e) => OnChangeInput(e)}
 				id={name}
-				type={type}
 				className="form-control"
 				autoFocus
 			/>

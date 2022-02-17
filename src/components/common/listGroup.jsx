@@ -1,10 +1,6 @@
 import React from "react";
-import PropTypes, { arrayOf } from "prop-types";
-import _ from "lodash";
-import {
-	getKeyValueObject,
-	getObjectProperty,
-} from "../../utils/objectFunctions";
+import PropTypes from "prop-types";
+import { getKeyValueObject } from "../../utils/objectFunctions";
 
 const ListGroup = ({
 	items = Array,
@@ -13,10 +9,6 @@ const ListGroup = ({
 	contentPropertyPath,
 	onItemSelect = Function,
 }) => {
-	// const { items= } = props;
-	const listItems = items.map((item) =>
-		getKeyValueObject(item, uniqueKeyPropertyPath, contentPropertyPath)
-	);
 	return (
 		<ul className="list-group">
 			{items.map((item) => {

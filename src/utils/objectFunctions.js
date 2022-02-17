@@ -35,7 +35,7 @@ function getKeyValueObject(
 }
 
 function isEmptyObject(object) {
-	for (const {} in object) return false;
+	for (const key in object) return key && false;
 	return true;
 }
 export {

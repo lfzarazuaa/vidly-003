@@ -1,16 +1,14 @@
-import React, { Component } from "react";
+import React from "react";
 import Joi from "joi-browser";
-import Input from "./../../components/common/inputText";
-import { isEmptyObject } from "../../utils/objectFunctions";
+import Form from "../../components/common/form";
 
-class LoginForm extends Component {
+class LoginForm extends Form {
 	constructor(props) {
 		super(props);
 		this.componentsProps = {
 			username: {
 				name: "username",
 				label: "Username",
-				type: "text",
 			},
 			password: {
 				name: "password",
@@ -24,7 +22,7 @@ class LoginForm extends Component {
 			[password.name]: Joi.string().required().label(password.label),
 		};
 		this.state = {
-			account: {
+			data: {
 				[username.name]: "mosh",
 				[password.name]: "myS3cretPasSw0r0d",
 			},
@@ -32,82 +30,19 @@ class LoginForm extends Component {
 		};
 	}
 
-	validate = () => {
-		const { state, schema } = this;
-		const options = { abortEarly: false }; // Check every field as the schema is defined.
-		// Obtain error property from Joi.
-		const { error } = Joi.validate(state.account, schema, options);
-		const errors = {};
-		if (!error) return errors;
-		// Read all the errors from the array.
-		error.details.forEach((error) => {
-			const { path: fieldName, message: errorMessage } = error;
-			errors[fieldName] = errorMessage;
-		});
-		return errors;
-	};
-
-	validateProperty = (input) => {
-		const { name, value } = input;
-		// For validate only one property not all the schema.
-		const property = { [name]: value };
-		const propertySchema = { [name]: this.schema[name] };
-		const { error } = Joi.validate(property, propertySchema);
-		return error ? error.details[0].message : null;
-	};
-
-	handleOnLogin = (e) => {
-		e.preventDefault();
-		const errors = this.validate();
-		this.setState({ errors });
-	};
-
-	handleOnChangeInput = ({ target: input }) => {
-		const { errors } = this.state;
-		const errorMessage = this.validateProperty(input);
-		// Update error according to the field
-		if (errorMessage) errors[input.name] = errorMessage;
-		// Assign the error.
-		else delete errors[input.name]; // Delete the error
-		// Update field content
-		const { account } = this.state;
-		account[input.name] = input.value;
-		//Update the state with updated content and errors messages.
-		this.setState({ account, errors });
+	doSubmit = () => {
+		console.log("Login form submitted.");
 	};
 
 	render() {
-		const { handleOnLogin, handleOnChangeInput, state, componentsProps } = this;
-		const { account, errors } = state;
+		const { handleOnSubmit, componentsProps } = this;
 		const { username, password } = componentsProps;
 		return (
-			<div className="container">
-				<form onSubmit={(e) => handleOnLogin(e)}>
-					<Input
-						name={username.name}
-						value={account.username}
-						label={username.label}
-						type={username.type}
-						error={errors.username}
-						OnChangeInput={(e) => handleOnChangeInput(e)}
-					/>
-					<Input
-						name={password.name}
-						value={account.password}
-						label={password.label}
-						type={password.type}
-						error={errors.password}
-						OnChangeInput={(e) => handleOnChangeInput(e)}
-					/>
-					<button
-						disabled={!isEmptyObject(this.validate())}
-						type="submit"
-						className="btn btn-primary mt-2"
-					>
-						Login
-					</button>
-				</form>
-			</div>
+			<form onSubmit={(e) => handleOnSubmit(e)}>
+				{this.renderInput(username)}
+				{this.renderInput(password)}
+				{this.renderSubmitButton("Login")}
+			</form>
 		);
 	}
 }
