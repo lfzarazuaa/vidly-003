@@ -3,6 +3,7 @@ import Joi from "joi-browser";
 import { isEmptyObject } from "../../utils/objectFunctions";
 import SubmitButton from "./submitFormButtom";
 import Input from "./inputText";
+import Select from "./inputSelect";
 
 // Use like abstract class.
 class Form extends Component {
@@ -39,7 +40,7 @@ class Form extends Component {
 		return error ? error.details[0].message : null;
 	};
 
-	handleOnSubmit = (e) => {
+	handleOnSubmit = (e, url) => {
 		e.preventDefault();
 		const errors = this.validateForm();
 		this.setState({ errors });
@@ -47,6 +48,17 @@ class Form extends Component {
 
 		// Call to the server.
 		this.doSubmit();
+		this.props.history.push(url);
+	};
+
+	handleOnReturn = (event, url) => {
+		event.preventDefault();
+		this.doReturn();
+		this.props.history.push(url);
+	};
+
+	doReturn = () => {
+		console.log("Return function");
 	};
 
 	doSubmit = () => {
@@ -78,6 +90,31 @@ class Form extends Component {
 				error={errors[name]}
 				OnChangeInput={(e) => this.handleOnChangeInput(e)}
 			/>
+		);
+	}
+
+	renderSelect({ name, label }, options = []) {
+		const { data, errors } = this.state;
+		return (
+			<Select
+				name={name}
+				value={data[name]}
+				label={label}
+				options={options}
+				error={errors[name]}
+				OnChangeInput={(e) => this.handleOnChangeInput(e)}
+			/>
+		);
+	}
+
+	renderReturnButton(url) {
+		return (
+			<button
+				className="btn btn-success m-2"
+				onClick={(e) => this.handleOnReturn(e, url)}
+			>
+				Return
+			</button>
 		);
 	}
 

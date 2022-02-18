@@ -11,6 +11,7 @@ import MoviesTable from "../../components/movies/moviesTable";
 import Pagination from "../../components/common/pagination";
 import { getGenres } from "../../services/fakeGenreService";
 import { sortByProperty } from "../../utils/sort";
+import { Link } from "react-router-dom";
 
 class Movies extends Component {
 	constructor(props) {
@@ -43,7 +44,6 @@ class Movies extends Component {
 		);
 		movieToChangeLike.isLikePressed = !movieToChangeLike.isLikePressed;
 		const movieInDb = saveMovie(movieToChangeLike); // Save on Db
-		console.log(movieInDb);
 		this.setState({ movies: getMovies() });
 	};
 
@@ -104,6 +104,11 @@ class Movies extends Component {
 	// Helpers to render.
 	generateMessage() {
 		const length = this.state.movies.length;
+		const newMovie = (
+			<Link to="/movies/new" className="btn btn-primary">
+				New Movie
+			</Link>
+		);
 		switch (length) {
 			case 0:
 				return (
@@ -121,12 +126,14 @@ class Movies extends Component {
 				return (
 					<div className="alert alert-warning m-2">
 						<p>There is one movie</p>
+						{newMovie}
 					</div>
 				);
 			default:
 				return (
 					<div className="alert alert-info m-2">
 						<p>{`There are ${length} movies`}</p>
+						{newMovie}
 					</div>
 				);
 		}

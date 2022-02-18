@@ -8,9 +8,12 @@ function sortByProperty(
 	pathColumnProperty = "path",
 	orderColumnProperty = "order"
 ) {
+	const propertyName = getObjectProperty(sortColumn, pathColumnProperty);
+	const sortby = (item) =>
+		getObjectProperty(item, propertyName).toString().toLowerCase();
 	const sorted = _.orderBy(
 		items,
-		[getObjectProperty(sortColumn, pathColumnProperty)],
+		[sortby],
 		[getObjectProperty(sortColumn, orderColumnProperty)]
 	);
 	if (addCounter) {

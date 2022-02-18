@@ -9,7 +9,6 @@ const Input = (props) => {
 				onChange={(e) => OnChangeInput(e)}
 				id={name}
 				className="form-control"
-				autoFocus
 			/>
 			{error && <div className="mt-2 alert alert-danger">{error}</div>}
 		</div>

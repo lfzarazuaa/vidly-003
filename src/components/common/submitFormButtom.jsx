@@ -1,6 +1,6 @@
 const SubmitButton = ({ label, disabled }) => {
 	return (
-		<button disabled={disabled} type="submit" className="btn btn-primary mt-2">
+		<button disabled={disabled} type="submit" className="btn btn-primary m-2">
 			{label}
 		</button>
 	);
