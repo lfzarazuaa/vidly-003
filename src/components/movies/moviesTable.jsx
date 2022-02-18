@@ -4,6 +4,7 @@ import LikeIcon from "../common/likeIcon";
 import { addIdToItems } from "../../utils/objectFunctions";
 import Table from "../common/table";
 import { Link } from "react-router-dom";
+import { Fragment } from "react/cjs/react.production.min";
 
 class MoviesTable extends Component {
 	columns = [
@@ -80,12 +81,14 @@ class MoviesTable extends Component {
 	render() {
 		const { movies, sortColumn, onSort } = this.props;
 		return (
-			<Table
-				items={movies} // Data to pass
-				columns={this.columns} // Columns distribution
-				sortColumn={sortColumn} // Column in wich will order.
-				onSort={(updatedSortColumn) => onSort(updatedSortColumn)} // Sorting
-			/>
+			<Fragment>
+				<Table
+					items={movies} // Data to pass
+					columns={this.columns} // Columns distribution
+					sortColumn={sortColumn} // Column in wich will order.
+					onSort={(updatedSortColumn) => onSort(updatedSortColumn)} // Sorting
+				/>
+			</Fragment>
 		);
 	}
 }

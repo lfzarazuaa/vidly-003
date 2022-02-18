@@ -12,10 +12,12 @@ import Pagination from "../../components/common/pagination";
 import { getGenres } from "../../services/fakeGenreService";
 import { sortByProperty } from "../../utils/sort";
 import { Link } from "react-router-dom";
+import SearchBox from "./../../components/common/searchBox";
 
 class Movies extends Component {
 	constructor(props) {
 		super(props);
+		this.queryTextDefaultValue = "";
 		this.state = {
 			movies: [],
 			genres: [],
@@ -23,6 +25,7 @@ class Movies extends Component {
 			currentPage: 1,
 			pageSize: 4,
 			sortColumn: { path: "title", order: "asc" },
+			queryText: this.queryTextDefaultValue,
 		};
 	}
 
@@ -62,9 +65,19 @@ class Movies extends Component {
 		}
 	};
 
-	// Filtering
+	// Filtering by Text
+	handleOnSearchText = (queryText) => {
+		const selectedGenre = this.state.genres[0];
+		this.setState({ queryText, selectedGenre, currentPage: 1 });
+	};
+
+	// Filtering by Genre
 	handleGenreSelect = (genre) => {
-		this.setState({ selectedGenre: genre, currentPage: 1 });
+		this.setState({
+			selectedGenre: genre,
+			queryText: this.queryTextDefaultValue,
+			currentPage: 1,
+		});
 	};
 
 	// Sorting
@@ -86,12 +99,21 @@ class Movies extends Component {
 			movies: allMovies,
 			selectedGenre,
 			sortColumn,
+			queryText,
 		} = this.state;
 
-		const filteredMovies =
-			selectedGenre && selectedGenre._id
-				? allMovies.filter((movie) => movie.genre._id === selectedGenre._id)
-				: allMovies;
+		let filteredMovies;
+
+		if (queryText === this.queryTextDefaultValue) {
+			filteredMovies =
+				selectedGenre && selectedGenre._id
+					? allMovies.filter((movie) => movie.genre._id === selectedGenre._id)
+					: allMovies;
+		} else {
+			filteredMovies = allMovies.filter((movie) =>
+				movie.title.toLowerCase().includes(queryText.toString().toLowerCase())
+			);
+		}
 
 		const totalCount = filteredMovies.length;
 
@@ -143,8 +165,14 @@ class Movies extends Component {
 		if (!this.state.movies || this.state.movies < 1) {
 			return null;
 		}
-		const { pageSize, currentPage, genres, selectedGenre, sortColumn } =
-			this.state;
+		const {
+			pageSize,
+			currentPage,
+			genres,
+			selectedGenre,
+			sortColumn,
+			queryText,
+		} = this.state;
 
 		const { movies, totalCount } = this.getProcessedMovies();
 
@@ -158,6 +186,13 @@ class Movies extends Component {
 					/>
 				</div>
 				<div className="col col-sm">
+					<SearchBox
+						value={queryText}
+						label={"Search by Title"}
+						placeholder={"Enter the title"}
+						name={"searchByTitle"}
+						OnChangedText={(newValue) => this.handleOnSearchText(newValue)}
+					/>
 					<MoviesTable
 						movies={movies}
 						sortColumn={sortColumn}
