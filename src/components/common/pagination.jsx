@@ -1,47 +1,37 @@
-import lodash from "lodash";
+import React from "react";
 import PropTypes from "prop-types";
-
+import range from "lodash/range";
 const Pagination = (props) => {
-  const { itemsCount, pageSize, selectedPage, onPageChanged } = props;
-  const generatePages = () => {
-    const addSelectedPage = (pageNumber) => {
-      let classLink = "page-item";
-      return pageNumber !== selectedPage ? classLink : classLink + " active";
-    };
-    const numberOfPages = itemsCount / pageSize || 0;
-    return lodash.range(1, numberOfPages + 1).map((pageNumber) => (
-      <li key={pageNumber} className={addSelectedPage(pageNumber)}>
-        <button className="page-link" onClick={() => onPageChanged(pageNumber)}>
-          {pageNumber}
-        </button>
-      </li>
-    ));
-  };
-  return (
-    <nav aria-label="Page navigation" className="container mt-4">
-      <ul className="pagination row justify-content-center">
-        <li className="page-item">
-          <button className="page-link" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </button>
-        </li>
-        {generatePages()}
-        <li className="page-item">
-          <button className="page-link" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-            <span className="sr-only">Next</span>
-          </button>
-        </li>
-      </ul>
-    </nav>
-  );
+	const { itemsCount, pageSize, currentPage, onPageChange } = props;
+
+	// Calculate pages.
+	const pagesCount = Math.ceil(itemsCount / pageSize);
+	if (pagesCount === 1) return null;
+	const pages = range(1, pagesCount + 1); // Obtain number of pages to render.
+
+	return (
+		<nav>
+			<ul className="pagination">
+				{pages.map((page) => (
+					<li
+						key={page}
+						className={page === currentPage ? "page-item active" : "page-item"}
+					>
+						<button className="page-link" onClick={() => onPageChange(page)}>
+							{page}
+						</button>
+					</li>
+				))}
+			</ul>
+		</nav>
+	);
 };
 
 Pagination.propTypes = {
-  itemsCount: PropTypes.number.isRequired,
-  pageSize: PropTypes.number.isRequired,
-  selectedPage: PropTypes.number.isRequired,
-  onPageChanged: PropTypes.func.isRequired,
+	itemsCount: PropTypes.number.isRequired,
+	pageSize: PropTypes.number.isRequired,
+	currentPage: PropTypes.number.isRequired,
+	onPageChange: PropTypes.func.isRequired,
 };
 
 export default Pagination;
