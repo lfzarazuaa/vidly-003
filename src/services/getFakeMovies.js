@@ -5,7 +5,7 @@ export const movies = [
     genre: { _id: "5b21ca3eeb7f6fbccd471818", name: "Action" },
     numberInStock: 6,
     dailyRentalRate: 2.5,
-    isLikePressed: false,
+    isLikeSelected: false,
   },
   {
     _id: "5b21ca3eeb7f6fbccd471816",
@@ -13,7 +13,7 @@ export const movies = [
     genre: { _id: "5b21ca3eeb7f6fbccd471818", name: "Action" },
     numberInStock: 5,
     dailyRentalRate: 2.5,
-    isLikePressed: false,
+    isLikeSelected: false,
   },
   {
     _id: "5b21ca3eeb7f6fbccd471817",
@@ -21,7 +21,7 @@ export const movies = [
     genre: { _id: "5b21ca3eeb7f6fbccd471820", name: "Thriller" },
     numberInStock: 8,
     dailyRentalRate: 3.5,
-    isLikePressed: false,
+    isLikeSelected: false,
   },
   {
     _id: "5b21ca3eeb7f6fbccd471819",
@@ -29,7 +29,7 @@ export const movies = [
     genre: { _id: "5b21ca3eeb7f6fbccd471814", name: "Comedy" },
     numberInStock: 7,
     dailyRentalRate: 3.5,
-    isLikePressed: false,
+    isLikeSelected: false,
   },
   {
     _id: "5b21ca3eeb7f6fbccd47181a",
@@ -37,7 +37,7 @@ export const movies = [
     genre: { _id: "5b21ca3eeb7f6fbccd471814", name: "Comedy" },
     numberInStock: 7,
     dailyRentalRate: 3.5,
-    isLikePressed: false,
+    isLikeSelected: false,
   },
   {
     _id: "5b21ca3eeb7f6fbccd47181b",
@@ -45,7 +45,7 @@ export const movies = [
     genre: { _id: "5b21ca3eeb7f6fbccd471814", name: "Comedy" },
     numberInStock: 7,
     dailyRentalRate: 3.5,
-    isLikePressed: false,
+    isLikeSelected: false,
   },
   {
     _id: "5b21ca3eeb7f6fbccd47181e",
@@ -53,7 +53,7 @@ export const movies = [
     genre: { _id: "5b21ca3eeb7f6fbccd471820", name: "Thriller" },
     numberInStock: 7,
     dailyRentalRate: 4.5,
-    isLikePressed: false,
+    isLikeSelected: false,
   },
   {
     _id: "5b21ca3eeb7f6fbccd47181f",
@@ -61,7 +61,7 @@ export const movies = [
     genre: { _id: "5b21ca3eeb7f6fbccd471820", name: "Thriller" },
     numberInStock: 4,
     dailyRentalRate: 3.5,
-    isLikePressed: false,
+    isLikeSelected: false,
   },
   {
     _id: "5b21ca3eeb7f6fbccd471821",
@@ -69,6 +69,6 @@ export const movies = [
     genre: { _id: "5b21ca3eeb7f6fbccd471818", name: "Action" },
     numberInStock: 7,
     dailyRentalRate: 3.5,
-    isLikePressed: false,
+    isLikeSelected: false,
   },
 ];
