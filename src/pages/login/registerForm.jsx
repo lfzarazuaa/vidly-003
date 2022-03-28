@@ -2,6 +2,7 @@ import React from "react";
 import Joi from "joi-browser";
 import Form from "../../components/common/form";
 import * as userService from "../../services/users/userService";
+import auth from "../../services/users/authService";
 
 class RegisterForm extends Form {
   constructor(props) {
@@ -47,7 +48,7 @@ class RegisterForm extends Form {
   doSubmit = async () => {
     try {
       const token = await userService.register(this.state.data);
-      localStorage.setItem("token", token);
+      auth.loginWithJwt(token);
       window.location = "/movies";
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
