@@ -24,18 +24,27 @@ class App extends Component {
   }
 
   render() {
-    console.log("state", this.state);
+    const { user } = this.state;
     return (
       <Fragment>
-        <MainNavbar user={this.state.user}></MainNavbar>
+        <MainNavbar user={user}></MainNavbar>
         <main role="main" className="container">
           <Switch>
             <Route path={"/customers"} component={Customers}></Route>
             <Route path={"/login/register"} component={RegisterForm}></Route>
             <Route path={"/login"} component={LoginForm}></Route>
             <Route path={"/logout"} component={Logout}></Route>
-            <Route path={"/movies/:id"} component={MovieForm}></Route>
-            <Route path={"/movies"} component={Movies}></Route>
+            <Route
+              path={"/movies/:id"}
+              render={(props) => {
+                if (!user) return <Redirect to="/login" />;
+                return <MovieForm {...props} />;
+              }}
+            ></Route>
+            <Route
+              path={"/movies"}
+              render={(props) => <Movies {...props} user={this.state.user} />}
+            ></Route>
             <Route path={"/rentals"} component={Rentals}></Route>
             <Route path={"/not-found"} component={NotFound}></Route>
             <Route path={"/"} exact component={Home}></Route>

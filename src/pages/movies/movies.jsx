@@ -126,11 +126,14 @@ class Movies extends Component {
   // Helpers to render.
   generateMessage() {
     const length = this.state.movies.length;
-    const newMovie = (
-      <Link to="/movies/new" className="btn btn-primary">
-        New Movie
-      </Link>
-    );
+    let newMovie = null;
+    if (this.props.user) {
+      newMovie = (
+        <Link to="/movies/new" className="btn btn-primary">
+          New Movie
+        </Link>
+      );
+    }
     switch (length) {
       case 0:
         return (
