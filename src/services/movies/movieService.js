@@ -1,7 +1,7 @@
-import config from "../../config.json";
+import enviroment from "../enviroment/enviromentService";
 import http from "../http/httpService";
 
-const moviesEndpoint = `${config.apiEndpoint}/movies`;
+const moviesEndpoint = `${enviroment.apiEndpoint}/movies`;
 
 function getMovieUrl(id) {
   return `${moviesEndpoint}/${id}`;

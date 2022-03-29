@@ -1,7 +1,7 @@
-import config from "../../config.json";
+import enviroment from "../enviroment/enviromentService";
 import http from "../http/httpService";
 
-const usersEndpoint = `${config.apiEndpoint}/users`;
+const usersEndpoint = `${enviroment.apiEndpoint}/users`;
 
 function getUserUrl(id) {
   return `${usersEndpoint}/${id}`;

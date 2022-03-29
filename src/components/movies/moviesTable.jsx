@@ -45,28 +45,30 @@ class MoviesTable extends Component {
       headerContent: "Rate",
       cellContent: (movie) => movie.dailyRentalRate,
     },
-    {
-      headerContent: (
-        <span className="fa fa-heartbeat" aria-hidden="true"></span>
-      ),
-      cellContent: (movie) => (
-        <LikeIcon
-          isLikeSelected={movie.isLikeSelected}
-          onClickLike={() => this.props.onLike(movie._id)}
-        />
-      ),
-    }, // Not able to sort.
   ];
 
   constructor(props) {
     super(props);
-    this.showDeleteColumn();
+    this.showLikeAndDeleteColumn();
     this.columns = addIdToItems(this.columns);
   }
 
-  showDeleteColumn() {
+  showLikeAndDeleteColumn() {
     const user = authService.getCurrentUser();
-    if (user && user["isAdmin"]) {
+    if (user) {
+      const likeColumn = {
+        headerContent: (
+          <span className="fa fa-heartbeat" aria-hidden="true"></span>
+        ),
+        cellContent: (movie) => (
+          <LikeIcon
+            isLikeSelected={movie.isLikeSelected}
+            onClickLike={() => this.props.onLike(movie._id)}
+          />
+        ),
+      }; // Not able to sort.
+      this.columns.push(likeColumn);
+      if (!user["isAdmin"]) return;
       const deleteColumn = {
         headerContent: (
           <span className="fa fa-window-close" aria-hidden="true"></span>
