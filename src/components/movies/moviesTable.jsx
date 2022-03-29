@@ -60,6 +60,11 @@ class MoviesTable extends Component {
 
   constructor(props) {
     super(props);
+    this.showDeleteColumn();
+    this.columns = addIdToItems(this.columns);
+  }
+
+  showDeleteColumn() {
     const user = authService.getCurrentUser();
     if (user && user["isAdmin"]) {
       const deleteColumn = {
@@ -77,7 +82,6 @@ class MoviesTable extends Component {
       }; // Not able to sort.
       this.columns.push(deleteColumn);
     }
-    this.columns = addIdToItems(this.columns);
   }
 
   generateMovieLink = (movie) => {
