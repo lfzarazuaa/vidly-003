@@ -23,7 +23,7 @@ export async function getMovie(id) {
 
 async function movieExist(id) {
   try {
-    if (!id) return { exist: false };
+    if (!id || id === "new") return { exist: false };
     const { data: movie } = await http.get(getMovieUrl(id));
     if (movie._id) return { exist: true, movie: movie };
     return { exist: false };
@@ -52,7 +52,7 @@ export async function saveMovie(movie) {
   if (result.exist)
     return (await http.put(getMovieUrl(movie._id), movieInDb)).data;
   // Add movie
-  return (await http.post(getMovieUrl(movie._id))).data;
+  return (await http.post(moviesEndpoint, movieInDb)).data;
 }
 
 export async function deleteMovie(id) {
