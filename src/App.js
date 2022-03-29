@@ -10,6 +10,7 @@ import MovieForm from "./pages/movies/movieForm";
 import NotFound from "./pages/notFound";
 import Rentals from "./pages/rentals";
 import RegisterForm from "./pages/login/registerForm";
+import ProtectedRoute from "./components/common/protectedRoute";
 import auth from "./services/users/authService";
 import "./App.css";
 
@@ -34,13 +35,10 @@ class App extends Component {
             <Route path={"/login/register"} component={RegisterForm}></Route>
             <Route path={"/login"} component={LoginForm}></Route>
             <Route path={"/logout"} component={Logout}></Route>
-            <Route
+            <ProtectedRoute
               path={"/movies/:id"}
-              render={(props) => {
-                if (!user) return <Redirect to="/login" />;
-                return <MovieForm {...props} />;
-              }}
-            ></Route>
+              component={MovieForm}
+            ></ProtectedRoute>
             <Route
               path={"/movies"}
               render={(props) => <Movies {...props} user={this.state.user} />}
