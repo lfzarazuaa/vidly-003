@@ -6,9 +6,6 @@ import "./index.css";
 import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
 
-console.log(process.env);
-console.log("Superman", process.env.REACT_APP_NAME);
-
 ReactDOM.render(
   <BrowserRouter>
     <React.StrictMode>
