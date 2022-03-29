@@ -5,6 +5,7 @@ import { addIdToItems } from "../../utils/objectFunctions";
 import Table from "../common/table";
 import { Link } from "react-router-dom";
 import { Fragment } from "react/cjs/react.production.min";
+import authService from "../../services/users/authService";
 
 class MoviesTable extends Component {
   columns = [
@@ -55,29 +56,34 @@ class MoviesTable extends Component {
         />
       ),
     }, // Not able to sort.
-    {
-      headerContent: (
-        <span className="fa fa-window-close" aria-hidden="true"></span>
-      ),
-      cellContent: (movie) => (
-        <button
-          className="btn btn-danger"
-          onClick={() => this.props.onDelete(movie._id)}
-        >
-          Delete
-        </button>
-      ),
-    }, // Not able to sort.
   ];
 
   constructor(props) {
     super(props);
+    const user = authService.getCurrentUser();
+    if (user && user["isAdmin"]) {
+      const deleteColumn = {
+        headerContent: (
+          <span className="fa fa-window-close" aria-hidden="true"></span>
+        ),
+        cellContent: (movie) => (
+          <button
+            className="btn btn-danger"
+            onClick={() => this.props.onDelete(movie._id)}
+          >
+            Delete
+          </button>
+        ),
+      }; // Not able to sort.
+      this.columns.push(deleteColumn);
+    }
     this.columns = addIdToItems(this.columns);
   }
 
   generateMovieLink = (movie) => {
     return `movies/${movie._id}`;
   };
+
   render() {
     const { movies, sortColumn, onSort } = this.props;
     return (
